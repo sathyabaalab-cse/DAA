@@ -1,0 +1,60 @@
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+int table[256];
+void ShiftTable(string p) {
+    int m = p.length();
+    for (int i = 0; i < 256; i++) {
+        table[i] = m;
+    }
+    for (int j = 0; j <= m - 2; j++) {
+        table[(unsigned char)p[j]] = m - 1 - j;
+    }
+}
+int horspool(string t, string p) {
+    int n = t.length();
+    int m = p.length();
+    if (m > n) return -1;
+    ShiftTable(p);
+    int i = m - 1;
+    while (i <= n - 1) {
+        int k = 0;
+        while ((k <= m - 1) && (p[m - 1 - k] == t[i - k])) {
+            k++;
+        }
+        if (k == m) {
+            return i - m + 1;
+        }
+        else {
+            i = i + table[(unsigned char)t[i]];
+        }
+    }
+    return -1;
+}
+int main() {
+    string t, p;
+    cout << "Enter text: ";
+    getline(cin, t);
+    cout << "Enter pattern: ";
+    getline(cin, p);
+    if (p.empty()) {
+        cout << "Pattern cannot be empty." << endl;
+        return 0;
+    }
+    ShiftTable(p);
+    cout << "\n--- Shift Table (Alphabet) ---\n";
+    for (char c = 'a'; c <= 'z'; c++) {
+        if (table[(unsigned char)c] != p.length()) {
+            cout << c << ":" << table[(unsigned char)c] << " ";
+        }
+    }
+    cout << "(others:" << p.length() << ")\n\n";
+    int pos = horspool(t, p);
+    if (pos == -1) {
+        cout << "Pattern \"" << p << "\" not found" << endl;
+    } else {
+        cout << "Pattern \"" << p << "\" found at position " << pos << endl;
+    }
+    return 0;
+}
